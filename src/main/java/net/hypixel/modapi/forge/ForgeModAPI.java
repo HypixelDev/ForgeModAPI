@@ -1,6 +1,7 @@
 package net.hypixel.modapi.forge;
 
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.hypixel.modapi.HypixelModAPI;
@@ -69,11 +70,13 @@ public class ForgeModAPI {
                 return;
             }
 
-            try {
-                HypixelModAPI.getInstance().handle(identifier, new PacketSerializer(packet.getBufferData()));
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Failed to handle packet " + identifier, e);
-            }
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                try {
+                    HypixelModAPI.getInstance().handle(identifier, new PacketSerializer(packet.getBufferData()));
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Failed to handle packet " + identifier, e);
+                }
+            });
         }
     }
 }
