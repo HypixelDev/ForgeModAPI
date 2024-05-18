@@ -51,6 +51,7 @@ public class ForgeModAPI {
         return true;
     }
 
+    @ChannelHandler.Sharable
     private static class HypixelPacketHandler extends SimpleChannelInboundHandler<Packet<?>> {
         private static final HypixelPacketHandler INSTANCE = new HypixelPacketHandler();
 
