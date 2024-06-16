@@ -86,11 +86,13 @@ public class ForgeModAPI {
                 return;
             }
 
-            try {
-                HypixelModAPI.getInstance().handle(identifier, new PacketSerializer(packet.getBufferData()));
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Failed to handle packet " + identifier, e);
-            }
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                try {
+                    HypixelModAPI.getInstance().handle(identifier, new PacketSerializer(packet.getBufferData()));
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Failed to handle packet " + identifier, e);
+                }
+            });
         }
     }
 }
