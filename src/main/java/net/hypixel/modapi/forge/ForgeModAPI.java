@@ -87,11 +87,15 @@ public class ForgeModAPI {
                 return;
             }
 
+            PacketBuffer buffer = packet.getBufferData();
+            buffer.retain();
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 try {
-                    HypixelModAPI.getInstance().handle(identifier, new PacketSerializer(packet.getBufferData()));
+                    HypixelModAPI.getInstance().handle(identifier, new PacketSerializer(buffer));
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "Failed to handle packet " + identifier, e);
+                } finally {
+                    buffer.release();
                 }
             });
         }
