@@ -1,12 +1,13 @@
 package net.hypixel.modapi.forge;
 
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.hypixel.modapi.HypixelModAPI;
 import net.hypixel.modapi.packet.HypixelPacket;
+import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
 import net.hypixel.modapi.serializer.PacketSerializer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
@@ -15,6 +16,7 @@ import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
@@ -27,20 +29,35 @@ public class ForgeModAPI {
     public static final String VERSION = "0.4.0";
     private static final Logger LOGGER = Logger.getLogger("HypixelModAPI");
 
+    // We store a local reference to the net handler, so it's instantly available from the moment we connect
+    private NetHandlerPlayClient netHandler;
+
     @Mod.EventHandler
     public void init(FMLPostInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
-        HypixelModAPI.getInstance().setPacketSender(ForgeModAPI::sendPacket);
+        HypixelModAPI.getInstance().subscribeToEventPacket(ClientboundLocationPacket.class);
+        HypixelModAPI.getInstance().setPacketSender(this::sendPacket);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onServerConnect(FMLNetworkEvent.ClientConnectedToServerEvent event) {
+        netHandler = (NetHandlerPlayClient) event.handler;
         event.manager.channel().pipeline().addBefore("packet_handler", "hypixel_mod_api_packet_handler", HypixelPacketHandler.INSTANCE);
     }
 
-    private static boolean sendPacket(HypixelPacket packet) {
-        NetHandlerPlayClient netHandler = Minecraft.getMinecraft().getNetHandler();
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onServerDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
+        netHandler = null;
+    }
+
+    private boolean sendPacket(HypixelPacket packet) {
         if (netHandler == null) {
+            return false;
+        }
+
+        if (!netHandler.getNetworkManager().isChannelOpen()) {
+            LOGGER.warning("Attempted to send packet while channel is closed!");
+            netHandler = null;
             return false;
         }
 
