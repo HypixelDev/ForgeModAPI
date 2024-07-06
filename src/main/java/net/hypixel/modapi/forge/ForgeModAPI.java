@@ -23,10 +23,9 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Mod(modid = ForgeModAPI.MODID, version = ForgeModAPI.VERSION, clientSideOnly = true, name = "Hypixel Mod API")
+@Mod(modid = ForgeModAPI.MODID, clientSideOnly = true, name = "Hypixel Mod API")
 public class ForgeModAPI {
     public static final String MODID = "hypixel_mod_api";
-    public static final String VERSION = "0.5.0";
     private static final Logger LOGGER = Logger.getLogger("HypixelModAPI");
 
     // We store a local reference to the net handler, so it's instantly available from the moment we connect

@@ -6,12 +6,8 @@
     "version": "${version}",
     "mcversion": "${mcversion}",
     "url": "https://modrinth.com/mod/hypixel-mod-api/",
-    "updateUrl": "",
     "authorList": [
       "Hypixel Inc."
-    ],
-    "logoFile": "",
-    "screenshots": [],
-    "dependencies": []
+    ]
   }
 ]
