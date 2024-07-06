@@ -12,7 +12,6 @@ plugins {
 val baseGroup: String by project
 val mcVersion: String by project
 val version: String by project
-val modid: String by project
 
 // Toolchains:
 java {
@@ -77,15 +76,13 @@ tasks.withType(JavaCompile::class) {
     options.encoding = "UTF-8"
 }
 
-tasks.withType(Jar::class) {
-    archiveBaseName.set(modid)
+tasks.withType(org.gradle.jvm.tasks.Jar::class) {
+    archiveBaseName.set("HypixelModAPI")
 }
 
 tasks.processResources {
     inputs.property("version", project.version)
     inputs.property("mcversion", mcVersion)
-    inputs.property("modid", modid)
-    inputs.property("basePackage", baseGroup)
 
     filesMatching(listOf("mcmod.info", "version.properties")) {
         expand(inputs.properties)

@@ -17,4 +17,4 @@ pluginManagement {
 }
 
 
-rootProject.name = "hypixel-mod-api"
+rootProject.name = "ForgeModAPI"
