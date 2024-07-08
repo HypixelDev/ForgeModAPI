@@ -12,7 +12,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "0.5.0"
+version = "1.0.0.1" // First 3 numbers should correspond to the version of the API, last number is for the mod itself for any changes/fixes
 group = "net.hypixel.modapi" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "HypixelModAPI"
 sourceCompatibility = 1.8
@@ -39,7 +39,7 @@ configurations {
 }
 
 dependencies {
-    shade "net.hypixel:mod-api:0.5.0"
+    shade "net.hypixel:mod-api:1.0"
 }
 
 jar {
