@@ -36,7 +36,6 @@ public class ForgeModAPI {
     public void init(FMLPostInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
         HypixelModAPI.getInstance().setPacketSender(this::sendPacket);
-        LOGGER.debug("Hypixel Mod API initialized");
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
