@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -145,8 +146,12 @@ public class HypixelModAPITweaker implements ITweaker {
 	 */
 	private void injectAPI() {
 		LOGGER.info("Injecting mod API of version {}", VERSION_NAME);
-		CoreModManager.getReparseableCoremods()
-		              .add(unpackAPI().getPath());
+		try {
+			Launch.classLoader.addURL(unpackAPI().toURI().toURL());
+			LOGGER.info("Added mod API to classpath");
+		} catch (MalformedURLException e) {
+			LOGGER.error("Could not add mod API to classpath", e);
+		}
 	}
 
 	/**
@@ -200,6 +205,7 @@ public class HypixelModAPITweaker implements ITweaker {
 	@Override
 	public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
 		offerVersionToBlackboard();
+		allowModLoading();
 	}
 
 	@Override

@@ -17,6 +17,10 @@ task generateVersionInfo(type: WriteProperties) {
 }
 
 tasks.jar {
+    dependsOn(project(":").reobfJar)
     from(project(":").jar)
     from(generateVersionInfo)
+    manifest {
+        attributes("TweakClass": "net.hypixel.modapi.tweaker.HypixelModAPITweaker")
+    }
 }
