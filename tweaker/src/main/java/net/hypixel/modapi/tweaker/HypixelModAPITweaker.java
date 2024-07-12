@@ -5,6 +5,8 @@ import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +26,7 @@ import java.util.Properties;
  */
 public class HypixelModAPITweaker implements ITweaker {
 
+	private static Logger LOGGER = LogManager.getLogger();
 	public static final String VERSION_NAME;
 	public static final long VERSION;
 
@@ -33,9 +36,10 @@ public class HypixelModAPITweaker implements ITweaker {
 		try {
 			properties.load(HypixelModAPITweaker.class.getResourceAsStream("/hypixel-mod-api-bundled.properties"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("Could not load version information for bundled hypixel mod API", e);
 		}
 		VERSION_NAME = properties.getProperty("version", "0.0.0.0");
+		LOGGER.info("Loaded bundled hypixel mod API version as {}", VERSION_NAME);
 		String[] versionComponents = VERSION_NAME.split("\\.");
 		assert versionComponents.length == 4;
 		// We pack each of the four version components into a long.
@@ -48,6 +52,7 @@ public class HypixelModAPITweaker implements ITweaker {
 			version += Long.parseLong(versionComponents[i]);
 		}
 		VERSION = version;
+		LOGGER.info("Loaded bundled hypixel mod API numeric version as {}", VERSION);
 	}
 
 	public static final String BUNDLED_JAR_NAME = "HypixelModAPI-" + VERSION_NAME + ".jar";
@@ -85,9 +90,15 @@ public class HypixelModAPITweaker implements ITweaker {
 	 */
 	private void tryInjectAPI() {
 		// If the maximum installed version isn't our version return
-		if (getBlackboardVersion() != VERSION) return;
+		if (getBlackboardVersion() != VERSION) {
+			LOGGER.info("Blackboard version newer than our version {}. Skipping injecting API.", VERSION);
+			return;
+		}
 		// If we didn't offer to install this version return
-		if (!hasOfferedVersion) return;
+		if (!hasOfferedVersion) {
+			LOGGER.info("Someone else with the same version number {} offered to inject themselves first. Skipping injecting API.", VERSION);
+			return;
+		}
 
 		injectAPI();
 	}
@@ -99,6 +110,7 @@ public class HypixelModAPITweaker implements ITweaker {
 	 */
 	private File unpackAPI() {
 		File extractedFile = new File("hypixel-mod-api/" + BUNDLED_JAR_NAME).getAbsoluteFile();
+		LOGGER.info("Unpacking mod API to {}", extractedFile);
 		//noinspection ResultOfMethodCallIgnored
 		extractedFile.getParentFile().mkdirs();
 		try (InputStream bundledJar = Objects.requireNonNull(
@@ -106,8 +118,10 @@ public class HypixelModAPITweaker implements ITweaker {
 				"Could not find bundled hypixel mod api");
 		     OutputStream outputStream = Files.newOutputStream(extractedFile.toPath())) {
 			IOUtils.copy(bundledJar, outputStream);
+			LOGGER.info("Successfully extracted mod API file");
 			return extractedFile;
 		} catch (IOException e) {
+			LOGGER.error("Could not extract mod API file", e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -130,6 +144,7 @@ public class HypixelModAPITweaker implements ITweaker {
 	 * Inject the API into Forge to be loaded as a mod. This will also extract the JAR.
 	 */
 	private void injectAPI() {
+		LOGGER.info("Injecting mod API of version {}", VERSION_NAME);
 		CoreModManager.getReparseableCoremods()
 		              .add(unpackAPI().getPath());
 	}
@@ -146,6 +161,9 @@ public class HypixelModAPITweaker implements ITweaker {
 			              .add(file.getPath());
 			CoreModManager.getIgnoredMods()
 			              .remove(file.getPath());
+			LOGGER.info("Re-added mod {} to the mod candidate list.", file);
+		} else {
+			LOGGER.warn("Did not find JAR including this tweaker, cannot re-add mod.");
 		}
 	}
 
@@ -158,6 +176,7 @@ public class HypixelModAPITweaker implements ITweaker {
 	 */
 	private void offerVersionToBlackboard() {
 		if (getBlackboardVersion() < VERSION) {
+			LOGGER.info("Offering newer version {} > {}", VERSION, getBlackboardVersion());
 			hasOfferedVersion = true;
 			Launch.blackboard.put(VERSION_KEY, VERSION);
 		}
