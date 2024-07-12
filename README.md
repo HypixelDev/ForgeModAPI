@@ -6,3 +6,12 @@ This repository contains the implementation of the Hypixel Mod API for the Froge
 ## Contributing
 
 If you wish to contribute to this implementation of the Mod API to offer improvements or fixes, you can do so by forking the repository and creating a pull request.
+
+> [!IMPORTANT]  
+> Run `gradlew setupDecompWorkspace` after importing the project to generate the files required to build it
+
+If IntelliJ still shows unknown symbol errors after running the command, you may need to [clear the filesystem cache](https://www.jetbrains.com/help/idea/invalidate-caches.html).
+
+### Testing Your Changes
+
+You can enable DevAuth to log in to the Hypixel server with your Minecraft account. Please see the [DevAuth docs](https://github.com/DJtheRedstoner/DevAuth) for more details.

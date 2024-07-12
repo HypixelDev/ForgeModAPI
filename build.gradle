@@ -21,6 +21,9 @@ allprojects {
         maven {
             url "https://repo.hypixel.net/repository/Hypixel/"
         }
+        maven {
+            url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
+        }
         mavenLocal()
     }
 
@@ -45,6 +48,9 @@ minecraft {
     runDir = "run"
 
     mappings = "stable_22"
+
+    replace('${version}', project.version)
+    replaceIn("ForgeModAPI.java")
 }
 
 configurations {
@@ -54,6 +60,7 @@ configurations {
 
 dependencies {
     shade "net.hypixel:mod-api:1.0"
+    runtimeOnly "me.djtheredstoner:DevAuth-forge-legacy:1.2.1"
 }
 
 jar {
