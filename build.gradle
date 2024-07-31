@@ -11,22 +11,36 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+allprojects {
+    apply plugin: 'maven-publish'
+    version = "1.0.0.2" // First 3 numbers should correspond to the version of the API, last number is for the mod itself for any changes/fixes
+    group = "net.hypixel" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+    archivesBaseName = "HypixelModAPI"
 
-version = "1.0.0.1" // First 3 numbers should correspond to the version of the API, last number is for the mod itself for any changes/fixes
-group = "net.hypixel.modapi" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "HypixelModAPI"
+    repositories {
+        maven {
+            url "https://repo.hypixel.net/repository/Hypixel/"
+        }
+        maven {
+            url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
+        }
+        mavenLocal()
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = project.group
+                artifactId = project == rootProject ? 'mod-api-forge' : ('mod-api-forge-' + project.name)
+                version = project.version
+                    from components.java
+                }
+        }
+    }
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-repositories {
-    maven {
-        url "https://repo.hypixel.net/repository/Hypixel/"
-    }
-    maven {
-        url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
-    }
-    mavenLocal()
-}
 
 minecraft {
     version = "1.8.9-11.15.1.1722"
