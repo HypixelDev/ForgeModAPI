@@ -20,14 +20,14 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid = ForgeModAPI.MODID, version = ForgeModAPI.VERSION, clientSideOnly = true, name = "Hypixel Mod API")
 public class ForgeModAPI {
     public static final String MODID = "hypixel_mod_api";
-    public static final String VERSION = "1.0.0.1";
-    private static final Logger LOGGER = Logger.getLogger("HypixelModAPI");
+    public static final String VERSION = "${version}";
+    private static final Logger LOGGER = LogManager.getLogger("HypixelModAPI");
 
     // We store a local reference to the net handler, so it's instantly available from the moment we connect
     private NetHandlerPlayClient netHandler;
@@ -55,7 +55,7 @@ public class ForgeModAPI {
         }
 
         if (!netHandler.getNetworkManager().isChannelOpen()) {
-            LOGGER.warning("Attempted to send packet while channel is closed!");
+            LOGGER.warn("Attempted to send packet while channel is closed!");
             netHandler = null;
             return false;
         }
@@ -91,7 +91,7 @@ public class ForgeModAPI {
                 try {
                     HypixelModAPI.getInstance().handle(identifier, new PacketSerializer(buffer));
                 } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Failed to handle packet " + identifier, e);
+                    LOGGER.warn("Failed to handle packet {}", identifier, e);
                 } finally {
                     buffer.release();
                 }
