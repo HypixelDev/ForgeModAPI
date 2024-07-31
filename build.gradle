@@ -1,3 +1,26 @@
+class ServerCredentials {
+    String username
+    String password
+
+    ServerCredentials(String username, String password) {
+        this.username = username
+        this.password = password
+    }
+}
+
+static ServerCredentials getServerCredentials(String serverId) {
+    def settingsXml = new File(System.getProperty("user.home"), ".m2/settings.xml")
+    def mavenSettings = new XmlSlurper().parse(settingsXml)
+
+    for (final def server in mavenSettings.servers.server) {
+        if (server.id == serverId) {
+            return new ServerCredentials(server.username.text(), server.password.text())
+        }
+    }
+
+    return null
+}
+
 // For those who want the bleeding edge
 buildscript {
     repositories {
@@ -35,6 +58,16 @@ allprojects {
                 version = project.version
                     from components.java
                 }
+        }
+        repositories {
+            maven {
+                url = 'https://repo.hypixel.net/repository/Hypixel/'
+                ServerCredentials serverCreds = getServerCredentials("Hypixel")
+                credentials {
+                    username = serverCreds.username
+                    password = serverCreds.password
+                }
+            }
         }
     }
 }
