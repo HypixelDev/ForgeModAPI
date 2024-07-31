@@ -4,7 +4,7 @@ This repository contains the implementation of the Hypixel Mod API for the Forge
 
 ## Usage
 
-Add the HyPixel Maven repository to your build:
+Add the Hypixel Maven repository to your build:
 
 ```kotlin
 repositories {
@@ -15,7 +15,7 @@ repositories {
 Then depend on the Forge Mod API. This will automatically pull in dependencies too.
 
 ```kotlin
-val version = "1.0.0.2"
+val version = "1.0.1.1"
 dependencies {
     modImplementation("net.hypixel:mod-api-forge:$version")
     // If you use ForgeGradle 2 you might need to use fg.deobf or deobfCompile instead. Consult your MDK for tips on how
@@ -23,11 +23,11 @@ dependencies {
 }
 ```
 
-From here on out you can use the [HyPixel Mod API](https://github.com/HypixelDev/ModAPI#example-usage) directly.
+From here on out you can use the [Hypixel Mod API](https://github.com/HypixelDev/ModAPI#example-usage) directly.
 
-### Bundling the HyPixel Mod API
+### Bundling the Hypixel Mod API
 
-When using the HyPixel Mod API you need to instruct your users to
+When using the Hypixel Mod API you need to instruct your users to
 [download](https://modrinth.com/mod/hypixel-mod-api/versions?l=forge) the mod api and put it in their mods folders.
 
 Alternatively you can bundle a loading tweaker instead. This involves a bit more setup, but will result in your mod
