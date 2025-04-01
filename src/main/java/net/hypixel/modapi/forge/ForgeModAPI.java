@@ -73,20 +73,21 @@ public class ForgeModAPI {
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, Packet<?> msg) {
-            ctx.fireChannelRead(msg);
-
             if (!(msg instanceof S3FPacketCustomPayload)) {
+                ctx.fireChannelRead(msg);
                 return;
             }
 
             S3FPacketCustomPayload packet = (S3FPacketCustomPayload) msg;
             String identifier = packet.getChannelName();
             if (!HypixelModAPI.getInstance().getRegistry().isRegistered(identifier)) {
+                ctx.fireChannelRead(msg);
                 return;
             }
 
             PacketBuffer buffer = packet.getBufferData();
             buffer.retain();
+            ctx.fireChannelRead(msg);
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 try {
                     HypixelModAPI.getInstance().handle(identifier, new PacketSerializer(buffer));
