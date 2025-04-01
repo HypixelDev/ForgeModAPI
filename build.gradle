@@ -92,7 +92,7 @@ configurations {
 }
 
 dependencies {
-    shade "net.hypixel:mod-api:1.0.1"
+    shade "net.hypixel:mod-api:dev-SNAPSHOT"
     runtimeOnly "me.djtheredstoner:DevAuth-forge-legacy:1.2.1"
 }
 
