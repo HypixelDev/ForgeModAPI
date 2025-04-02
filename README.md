@@ -15,7 +15,7 @@ repositories {
 Then depend on the Forge Mod API. This will automatically pull in dependencies too.
 
 ```kotlin
-val version = "1.0.1.1"
+val version = "1.0.1.2"
 dependencies {
     modImplementation("net.hypixel:mod-api-forge:$version")
     // If you use ForgeGradle 2 you might need to use fg.deobf or deobfCompile instead. Consult your MDK for tips on how
